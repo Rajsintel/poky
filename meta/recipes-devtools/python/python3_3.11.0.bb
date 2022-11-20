@@ -143,6 +143,7 @@ do_install:prepend() {
 
 do_install:append:class-target() {
         oe_multilib_header python${PYTHON_MAJMIN}/pyconfig.h
+        ln -sf ./python3 ${D}${bindir}/python
 }
 
 do_install:append:class-native() {
@@ -155,6 +156,7 @@ do_install:append:class-native() {
         # (these often end up too long for the #! parser in the kernel as the
         # buffer is 128 bytes long).
         ln -s python3-native/python3 ${D}${bindir}/nativepython3
+        ln -sf ./python3-native/python3 ${D}${bindir}/nativepython
 
         # Remove the opt-1.pyc and opt-2.pyc files. There are over 3,000 of them
         # and the overhead in each recipe-sysroot-native isn't worth it, particularly
@@ -215,6 +217,7 @@ do_install:append() {
 }
 
 do_install:append:class-nativesdk () {
+    ln -sf ./python3 ${D}${bindir}/python
     # Make sure we use /usr/bin/env python
     for PYTHSCRIPT in `grep -rIl ${bindir}/python ${D}${bindir}`; do
          sed -i -e '1s|^#!.*|#!/usr/bin/env python3|' $PYTHSCRIPT
@@ -391,6 +394,7 @@ RRECOMMENDS:${PN}-crypt:append:class-nativesdk = " ${MLPREFIX}openssl ${MLPREFIX
 
 # For historical reasons PN is empty and provided by python3-modules
 FILES:${PN} = ""
+RPROVIDES:${PN} = "${bindir}/python"
 RPROVIDES:${PN}-modules = "${PN}"
 
 FILES:${PN}-pydoc += "${bindir}/pydoc${PYTHON_MAJMIN} ${bindir}/pydoc3"
